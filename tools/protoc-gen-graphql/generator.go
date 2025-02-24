@@ -260,6 +260,8 @@ func (g *Generator) printServiceSchema(svc *protogen.Service, gen *protogen.Plug
 		"lower":      strings.ToLower,
 		"trimPrefix": strings.TrimPrefix,
 		"trimSuffix": strings.TrimSuffix,
+		"hasPrefix":  strings.HasPrefix,
+		"hasSuffix":  strings.HasSuffix,
 		"hasField": func(t *gqltypes.Type, fieldPrefix string) bool {
 			for _, f := range t.Fields {
 				if strings.HasSuffix(strings.ToLower(f.Name), strings.ToLower(fieldPrefix)) {
