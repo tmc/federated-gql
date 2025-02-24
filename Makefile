@@ -14,6 +14,6 @@ run-users:
 run-products:
 	go run ./services/products
 
-.PHONY: run-graphql
-run-graphql:
+.PHONY: run-graphql-gateway
+run-graphql-gateway:
 	go run ./services/graphql-gateway

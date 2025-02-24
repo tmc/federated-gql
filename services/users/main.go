@@ -15,16 +15,10 @@ import (
 )
 
 // userServer implements the UserService interface
-type userServer struct {
-	userv1connect.UnimplementedUserServiceHandler
-}
+type userServer struct{}
 
 // GetUser implements the UserService GetUser RPC method
-func (s *userServer) GetUser(
-	ctx context.Context,
-	req *connect.Request[userv1.GetUserRequest],
-) (*connect.Response[userv1.GetUserResponse], error) {
-	// TODO: Implement actual user retrieval logic
+func (s *userServer) GetUser(ctx context.Context, req *connect.Request[userv1.GetUserRequest]) (*connect.Response[userv1.GetUserResponse], error) {
 	if req.Msg.UserId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("user_id is required"))
 	}
@@ -49,7 +43,6 @@ func main() {
 	addr := fmt.Sprintf(":%s", port)
 	log.Printf("Starting user service on %s", addr)
 
-	// Use h2c so we can serve HTTP/2 without TLS - useful for development
 	err := http.ListenAndServe(
 		addr,
 		h2c.NewHandler(mux, &http2.Server{}),
