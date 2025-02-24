@@ -1,16 +1,22 @@
 syntax = "proto3";
 package user.v1;
+
 option go_package = "github.com/fraser-isbester/federated-gql/gen/go/user/v1;userv1";
 
 service UserService {
   rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
 }
 
+// GetUserRequest is the request message for the GetUser method.
 message GetUserRequest {
+  // The ID of the user to get.
   string user_id = 1;
 }
 
+// GetUserResponse is the response message for the GetUser method.
 message GetUserResponse {
+  // The ID of the user.
   string user_id = 1;
+  // The name of the user.
   string name = 2;
 }

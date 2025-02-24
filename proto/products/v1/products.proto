@@ -1,0 +1,25 @@
+syntax = "proto3";
+package product.v1;
+
+option go_package = "github.com/fraser-isbester/federated-gql/gen/go/product/v1;productv1";
+
+service ProductService {
+    // GetProduct returns a product by its ID.
+    rpc GetProduct(GetProductRequest) returns (GetProductResponse) {}
+}
+
+// GetProductRequest is the request message for the GetProduct method.
+message GetProductRequest {
+    // The ID of the product to get.
+    string product_id = 1;
+}
+
+// GetProductResponse is the response message for the GetProduct method.
+message GetProductResponse {
+    // The ID of the product.
+    string product_id = 1;
+    // The name of the product.
+    string name = 2;
+    // The price of the product.
+    double price = 3;
+}
