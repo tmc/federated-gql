@@ -1,0 +1,40 @@
+"""
+Generated schema for user service
+"""
+
+"""
+Queries specific to user service
+"""
+type userQueries {
+  User: GetUser
+}
+
+extend type Query {
+  user: userQueries!
+}
+
+
+"""
+GetUserResponse is the response message for the GetUser method.
+"""
+type GetUser @key(fields: "userId") {
+  """
+  The ID of the user.
+  """
+  userId: ID!
+  """
+  The name of the user.
+  """
+  name: String
+}
+
+
+"""
+GetUserRequest is the request message for the GetUser method.
+"""
+input GetUserInput {
+  """
+  The ID of the user to get.
+  """
+  userId: ID!
+}

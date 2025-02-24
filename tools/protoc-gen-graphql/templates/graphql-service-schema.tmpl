@@ -1,0 +1,64 @@
+{{ $schema := schema . -}}
+"""
+Generated schema for {{ $schema.ServiceName }} service
+"""
+
+"""
+Queries specific to {{ $schema.ServiceName }} service
+"""
+type {{$schema.ServiceName}}Queries {
+{{- range $field := $schema.RootQuery.Fields }}
+  {{- if $field.Comment }}
+  """
+  {{ $field.Comment }}
+  """
+  {{- end }}
+  {{ trimPrefix (trimSuffix $field.Name "Response") "get" }}: {{ trimSuffix $field.Type "Response" }}
+{{- end }}
+}
+
+extend type Query {
+  {{ lower $schema.ServiceName }}: {{$schema.ServiceName}}Queries!
+}
+
+{{ range $type := $schema.Types -}}
+{{ if not (eq $type.Name "Query") -}}
+{{- if $type.Comment }}
+"""
+{{ $type.Comment }}
+"""
+{{- end }}
+{{- if (hasField $type "id") }}
+type {{ trimSuffix $type.Name "Response" }} @key(fields: "{{ idField $type }}") {
+{{- else }}
+type {{ trimSuffix $type.Name "Response" }} {
+{{- end }}
+{{- range $field := $type.Fields }}
+  {{- if $field.Comment }}
+  """
+  {{ $field.Comment }}
+  """
+  {{- end }}
+  {{ $field.Name }}: {{ if (isIDField $field.Name) }}ID!{{ else if (eq $field.Type "ID") }}String{{ else }}{{ $field.Type }}{{ end }}
+{{- end }}
+}
+{{ end }}
+{{ end -}}
+
+{{ range $input := $schema.Inputs -}}
+{{- if $input.Comment }}
+"""
+{{ $input.Comment }}
+"""
+{{- end }}
+input {{ $input.Name }} {
+{{- range $field := $input.Fields }}
+  {{- if $field.Comment }}
+  """
+  {{ $field.Comment }}
+  """
+  {{- end }}
+  {{ $field.Name }}: {{ if (isIDField $field.Name) }}ID!{{ else }}{{ $field.Type }}{{ end }}
+{{- end }}
+}
+{{ end -}}

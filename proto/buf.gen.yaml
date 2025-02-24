@@ -10,3 +10,7 @@ plugins:
     out: ../gen/go
     opt:
       - paths=source_relative
+  - local: protoc-gen-graphql
+    out: ../gen/graphql
+    opt:
+      - paths=source_relative

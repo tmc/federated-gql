@@ -1,0 +1,47 @@
+"""
+Generated schema for product service
+"""
+
+"""
+Queries specific to product service
+"""
+type productQueries {
+  """
+  GetProduct returns a product by its ID.
+  """
+  Product: GetProduct
+}
+
+extend type Query {
+  product: productQueries!
+}
+
+
+"""
+GetProductResponse is the response message for the GetProduct method.
+"""
+type GetProduct @key(fields: "productId") {
+  """
+  The ID of the product.
+  """
+  productId: ID!
+  """
+  The name of the product.
+  """
+  name: String
+  """
+  The price of the product.
+  """
+  price: Float
+}
+
+
+"""
+GetProductRequest is the request message for the GetProduct method.
+"""
+input GetProductInput {
+  """
+  The ID of the product to get.
+  """
+  productId: ID!
+}
