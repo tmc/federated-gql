@@ -1,0 +1,11 @@
+# proto/buf.yaml
+version: v2
+breaking:
+ use:
+   - FILE
+lint:
+ use:
+   - DEFAULT
+deps:
+ - buf.build/googleapis/googleapis
+ - buf.build/envoyproxy/protoc-gen-validate
