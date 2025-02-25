@@ -43,6 +43,7 @@ func (s *userServer) GetUser(ctx context.Context, req *connect.Request[userv1.Ge
 			Name:   fmt.Sprintf("User %s", req.Msg.UserId),
 		}
 	}
+	fmt.Printf("GetUser: returning user: %v\n", user.Name)
 
 	return connect.NewResponse(&userv1.GetUserResponse{
 		User: user,

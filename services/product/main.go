@@ -45,6 +45,8 @@ func (s *productServer) GetProduct(ctx context.Context, req *connect.Request[pro
 		}
 	}
 
+	fmt.Printf("GetProduct: returning product: %v\n", product.Name)
+
 	return connect.NewResponse(&productv1.GetProductResponse{
 		Product: product,
 	}), nil

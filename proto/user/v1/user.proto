@@ -15,6 +15,12 @@ message GetUserRequest {
 
 // GetUserResponse is the response message for the GetUser method.
 message GetUserResponse {
+  // The user.
+  User user = 1;
+}
+
+// User is a user.
+message User {
   // The ID of the user.
   string user_id = 1;
   // The name of the user.

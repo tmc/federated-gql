@@ -16,6 +16,12 @@ message GetProductRequest {
 
 // GetProductResponse is the response message for the GetProduct method.
 message GetProductResponse {
+    // The product.
+    Product product = 1;
+}
+
+// Product is a product.
+message Product {
     // The ID of the product.
     string product_id = 1;
     // The name of the product.
