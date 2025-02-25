@@ -17,7 +17,9 @@ type {{$schema.ServiceName}}Service {
   {{- if $field.Comment }}
   # {{ $field.Comment }}
   {{- end }}
-  {{ trimPrefix $field.Name "get" | lower }}(input: ProductInput!): Product{{ if $field.IsRequired }}!{{ end }}
+  {{- $responseType := (index $schema.Types 0).Name -}}
+  {{- $inputType := (index $schema.Inputs 0).Name -}}
+  {{ trimPrefix $field.Name "get" | lower }}(input: {{ $inputType }}!): {{ $responseType }}{{ if $field.IsRequired }}!{{ end }}
 {{- end }}
 }
 {{ end -}}
@@ -27,13 +29,13 @@ type {{$schema.ServiceName}}Service {
 {{- if $type.Comment }}
 # {{ $type.Comment }}
 {{- end }}
-type Product @key(fields: "id") {
+type {{ $type.Name }} @key(fields: "id") {
 {{- range $field := $type.Fields }}
   {{- if $field.Comment }}
   # {{ $field.Comment }}
   {{- end }}
   {{- $fieldName := $field.Name -}}
-  {{- if eq $fieldName "productId" -}}
+  {{- if eq $fieldName (printf "%sId" (lower $schema.ServiceName)) -}}
     {{- $fieldName = "id" -}}
   {{- end -}}
   {{- $fieldType := $field.Type -}}
@@ -56,13 +58,13 @@ type Product @key(fields: "id") {
 {{- if $input.Comment }}
 # {{ $input.Comment }}
 {{- end }}
-input ProductInput {
+input {{ $input.Name }} {
 {{- range $field := $input.Fields }}
   {{- if $field.Comment }}
   # {{ $field.Comment }}
   {{- end }}
   {{- $fieldName := $field.Name -}}
-  {{- if eq $fieldName "productId" -}}
+  {{- if eq $fieldName (printf "%sId" (lower $schema.ServiceName)) -}}
     {{- $fieldName = "id" -}}
   {{- end }}
   {{ $fieldName }}: {{ $field.Type }}{{ if $field.IsRequired }}!{{ end }}
