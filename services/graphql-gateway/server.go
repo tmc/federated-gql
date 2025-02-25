@@ -1,17 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/99designs/gqlgen/graphql/handler"
-	"github.com/99designs/gqlgen/graphql/handler/extension"
-	"github.com/99designs/gqlgen/graphql/handler/lru"
-	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
+	productv1connect "github.com/fraser-isbester/federated-gql/gen/go/product/v1/productv1connect"
+	userv1connect "github.com/fraser-isbester/federated-gql/gen/go/user/v1/userv1connect"
 	"github.com/fraser-isbester/federated-gql/services/graphql-gateway/graph"
-	"github.com/vektah/gqlparser/v2/ast"
 )
 
 const defaultPort = "8080"
@@ -22,19 +21,26 @@ func main() {
 		port = defaultPort
 	}
 
-	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	// Create Connect RPC clients
+	productClient := productv1connect.NewProductServiceClient(
+		http.DefaultClient,
+		"http://localhost:8081",
+	)
 
-	srv.AddTransport(transport.Options{})
-	srv.AddTransport(transport.GET{})
-	srv.AddTransport(transport.POST{})
+	userClient := userv1connect.NewUserServiceClient(
+		http.DefaultClient,
+		"http://localhost:8082",
+	)
 
-	srv.SetQueryCache(lru.New[*ast.QueryDocument](1000))
+	// Create resolver with RPC clients
+	resolver := graph.NewResolver(productClient, userClient)
+	fmt.Println(resolver)
 
-	srv.Use(extension.Introspection{})
-	srv.Use(extension.AutomaticPersistedQuery{
-		Cache: lru.New[string](100),
-	})
+	// Create a placeholder for the executable schema
+	// This will be generated after gqlgen generation
+	srv := handler.NewDefaultServer(nil)
 
+	// Add playground handler
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
 

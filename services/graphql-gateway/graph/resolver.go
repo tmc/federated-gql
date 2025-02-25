@@ -1,13 +1,28 @@
 package graph
 
-//go:generate go run github.com/99designs/gqlgen generate
+import (
+	productv1connect "github.com/fraser-isbester/federated-gql/gen/go/product/v1/productv1connect"
+	userv1connect "github.com/fraser-isbester/federated-gql/gen/go/user/v1/userv1connect"
+)
 
-import "github.com/fraser-isbester/federated-gql/services/graphql-gateway/graph/model"
-
-// This file will not be regenerated automatically.
-//
-// It serves as dependency injection for your app, add any dependencies you require here.
-
+// Resolver is the root resolver that stores dependencies
 type Resolver struct {
-	todos []*model.Todo
+	productClient productv1connect.ProductServiceClient
+	userClient    userv1connect.UserServiceClient
 }
+
+// NewResolver creates a new root resolver with the given clients
+func NewResolver(pc productv1connect.ProductServiceClient, uc userv1connect.UserServiceClient) *Resolver {
+	return &Resolver{
+		productClient: pc,
+		userClient:    uc,
+	}
+}
+
+// Query returns the root query resolver
+func (r *Resolver) Query() QueryResolver {
+	return &queryResolver{r}
+}
+
+// Centralized queryResolver to avoid redeclaration
+type queryResolver struct{ *Resolver }

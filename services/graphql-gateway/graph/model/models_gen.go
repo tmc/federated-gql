@@ -2,18 +2,22 @@
 
 package model
 
-type Mutation struct {
+// The ID of the product.
+type Product struct {
+	ProductID string   `json:"productId"`
+	Name      *string  `json:"name,omitempty"`
+	Price     *float64 `json:"price,omitempty"`
 }
 
-type NewTodo struct {
-	Text   string `json:"text"`
-	UserID string `json:"userId"`
-}
+func (Product) IsEntity() {}
 
 type Query struct {
 }
 
+// User is a federated entity, keyed by userId.
 type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	UserID string  `json:"userId"`
+	Name   *string `json:"name,omitempty"`
 }
+
+func (User) IsEntity() {}
