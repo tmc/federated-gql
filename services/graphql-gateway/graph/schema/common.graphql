@@ -1,0 +1,6 @@
+
+# The `@key` directive is used to define the fields that uniquely identify an object.
+directive @key(fields: String!) repeatable on OBJECT | INTERFACE
+
+# The `@external` directive is used to mark fields that are defined in another service.
+directive @external on FIELD_DEFINITION
