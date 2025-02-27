@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package metadata.v1;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/fraser/federated-gql/gen/go/metadata/v1;metadatav1";
+
+// Metadata options to enhance protocol buffer definitions
+// These are generic descriptors that can be used across different generation targets
+
+// Field options extend the standard protocol buffer field options
+extend google.protobuf.FieldOptions {
+  // Identifies this field as a key field for the containing entity
+  // For GraphQL federation, this marks a field as part of the entity's key
+  // For databases, this could indicate a primary or unique key
+  bool key = 50001;
+}
+
+// Message options extend the standard protocol buffer message options
+extend google.protobuf.MessageOptions {
+  // Identifies this message as an entity
+  // An entity represents a distinct object type with its own identity
+  // For GraphQL, this indicates a type that participates in federation
+  // For databases, this could represent a table or document type
+  bool entity = 50001;
+}
