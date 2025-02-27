@@ -3,6 +3,8 @@ package user.v1;
 
 option go_package = "github.com/fraser-isbester/federated-gql/gen/go/user/v1;userv1";
 
+import "metadata/v1/metadata.proto";
+
 service UserService {
   rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
 }
@@ -21,8 +23,10 @@ message GetUserResponse {
 
 // User is a user.
 message User {
+  option (metadata.v1.entity) = true;
+  
   // The ID of the user.
-  string user_id = 1;
+  string user_id = 1 [(metadata.v1.key) = true];
   // The name of the user.
   string name = 2;
 }

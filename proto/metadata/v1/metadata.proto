@@ -4,7 +4,7 @@ package metadata.v1;
 
 import "google/protobuf/descriptor.proto";
 
-option go_package = "github.com/fraser/federated-gql/gen/go/metadata/v1;metadatav1";
+option go_package = "github.com/fraser-isbester/federated-gql/gen/go/metadata/v1;metadatav1";
 
 // Metadata options to enhance protocol buffer definitions
 // These are generic descriptors that can be used across different generation targets
