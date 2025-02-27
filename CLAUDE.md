@@ -7,7 +7,11 @@
   - GraphQL only: `make generate-gql` (cleans generated files and runs gqlgen)
   - Clean GraphQL: `make clean-gql` (removes generated GraphQL files)
 - Build all services: `make build` (builds all services to the bin directory)
-- Test: `make test` (runs `go test ./...`)
+- Test: `make test` (runs tests for all services)
+- Test specific services:
+  - Users service: `make test-users`
+  - Product service: `make test-product`
+  - GraphQL gateway: `make test-graphql`
 - Test single package: `go test ./path/to/package`
 - Run services:
   - Users service: `make run-users`

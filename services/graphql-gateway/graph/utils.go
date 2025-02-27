@@ -11,13 +11,3 @@ func strPtr(s string) *string {
 func floatPtr(f float64) *float64 {
 	return &f
 }
-
-// intPtr returns a pointer to the given int
-func intPtr(i int) *int {
-	return &i
-}
-
-// boolPtr returns a pointer to the given bool
-func boolPtr(b bool) *bool {
-	return &b
-}

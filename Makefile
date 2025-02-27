@@ -20,22 +20,31 @@ generate-gql: clean-gql
 generate-all: generate-proto generate-gql
 
 .PHONY: test
-test:
-	go test ./...
+test: test-users test-product test-graphql
+
+.PHONY: test-users
+test-users:
+	cd services/users && go test -v ./...
+
+.PHONY: test-product
+test-product:
+	cd services/product && go test -v ./...
+
+.PHONY: test-graphql
+test-graphql:
+	cd services/graphql-gateway && go test -v ./...
 
 .PHONY: build
-build: build-users build-products build-graphql-gateway
+build: bin/users bin/product bin/graphql-gateway
 
-.PHONY: build-users
-build-users:
+# File-based targets to track dependencies
+bin/users: $(shell find services/users -type f -name "*.go") $(shell find gen/go/user -type f -name "*.go")
 	go build -o bin/users ./services/users
 
-.PHONY: build-products
-build-products:
+bin/product: $(shell find services/product -type f -name "*.go") $(shell find gen/go/product -type f -name "*.go")
 	go build -o bin/product ./services/product
 
-.PHONY: build-graphql-gateway
-build-graphql-gateway:
+bin/graphql-gateway: $(shell find services/graphql-gateway -type f -name "*.go") $(shell find gen/go -type f -name "*.go")
 	go build -o bin/graphql-gateway ./services/graphql-gateway
 
 .PHONY: run-users
