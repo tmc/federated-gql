@@ -1,13 +1,24 @@
 # CLAUDE.md - Development Guidelines
 
 ## Commands
-- Build/generate: `make generate` (runs `buf generate` for protocol buffers)
+- Build/generate: `make generate` (runs both proto and GraphQL generation)
+- Generate specific parts:
+  - Proto only: `make generate-proto` (runs `buf generate` in proto directory)
+  - GraphQL only: `make generate-gql` (cleans generated files and runs gqlgen)
+  - Clean GraphQL: `make clean-gql` (removes generated GraphQL files)
+- Build all services: `make build` (builds all services to the bin directory)
 - Test: `make test` (runs `go test ./...`)
 - Test single package: `go test ./path/to/package`
 - Run services:
   - Users service: `make run-users`
   - Products service: `make run-products`
   - GraphQL gateway: `make run-graphql-gateway`
+
+## Required Commands After Changes
+**IMPORTANT**: After every change, run the following commands before committing:
+1. `make generate` - ensure all generated code is up to date
+2. `make build` - verify all services build successfully
+3. `make test` - ensure all tests pass
 
 ## Code Style
 - **Error handling**: Check errors with `if err != nil`, no wrapping, use `connect.NewError` for Connect errors
@@ -22,5 +33,3 @@
 - `/gen`: Generated code from protobuf
 - `/services`: Individual service implementations
 - `/tools`: Code generation tools
-
-Always run tests before committing changes.

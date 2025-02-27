@@ -10,10 +10,9 @@ import (
 )
 
 // User is the resolver for the user field.
-func (r *queryResolver) User(ctx context.Context, userId string) (*model.User, error) {
-
+func (r *queryResolver) User(ctx context.Context, userID string) (*model.User, error) {
 	// Construct the Connect Request
-	input := &userv1.GetUserRequest{UserId: userId}
+	input := &userv1.GetUserRequest{UserId: userID}
 
 	// Make the RPC call using the Connect client
 	resp, err := r.userClient.GetUser(ctx, connect.NewRequest(input))

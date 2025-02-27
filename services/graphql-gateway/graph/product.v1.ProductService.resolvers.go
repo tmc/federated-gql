@@ -10,10 +10,9 @@ import (
 )
 
 // Product is the resolver for the product field.
-func (r *queryResolver) Product(ctx context.Context, productId string) (*model.Product, error) {
-
+func (r *queryResolver) Product(ctx context.Context, productID string) (*model.Product, error) {
 	// Construct the Connect Request
-	input := &productv1.GetProductRequest{ProductId: productId}
+	input := &productv1.GetProductRequest{ProductId: productID}
 
 	// Make the RPC call using the Connect client
 	resp, err := r.productClient.GetProduct(ctx, connect.NewRequest(input))
@@ -35,13 +34,4 @@ func (r *queryResolver) Product(ctx context.Context, productId string) (*model.P
 
 	// Return nil if product not found
 	return nil, nil
-}
-
-// Helper functions to convert to pointers
-func strPtr(s string) *string {
-	return &s
-}
-
-func floatPtr(f float64) *float64 {
-	return &f
 }
