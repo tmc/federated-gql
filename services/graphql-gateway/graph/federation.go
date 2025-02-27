@@ -161,7 +161,7 @@ func (ec *executionContext) resolveEntity(
 		switch resolverName {
 
 		case "findProductByProductID":
-			id0, err := ec.unmarshalNID2string(ctx, rep["productId"])
+			id0, err := ec.unmarshalNID2string(ctx, rep["productID"])
 			if err != nil {
 				return nil, fmt.Errorf(`unmarshalling param 0 for findProductByProductID(): %w`, err)
 			}
@@ -180,7 +180,7 @@ func (ec *executionContext) resolveEntity(
 		switch resolverName {
 
 		case "findUserByUserID":
-			id0, err := ec.unmarshalNID2string(ctx, rep["userId"])
+			id0, err := ec.unmarshalNID2string(ctx, rep["userID"])
 			if err != nil {
 				return nil, fmt.Errorf(`unmarshalling param 0 for findUserByUserID(): %w`, err)
 			}
@@ -232,10 +232,10 @@ func entityResolverNameForProduct(ctx context.Context, rep EntityRepresentation)
 		// we shouldn't use use it
 		allNull := true
 		m = rep
-		val, ok = m["productId"]
+		val, ok = m["productID"]
 		if !ok {
 			entityResolverErrs = append(entityResolverErrs,
-				fmt.Errorf("%w due to missing Key Field \"productId\" for Product", ErrTypeNotFound))
+				fmt.Errorf("%w due to missing Key Field \"productID\" for Product", ErrTypeNotFound))
 			break
 		}
 		if allNull {
@@ -267,10 +267,10 @@ func entityResolverNameForUser(ctx context.Context, rep EntityRepresentation) (s
 		// we shouldn't use use it
 		allNull := true
 		m = rep
-		val, ok = m["userId"]
+		val, ok = m["userID"]
 		if !ok {
 			entityResolverErrs = append(entityResolverErrs,
-				fmt.Errorf("%w due to missing Key Field \"userId\" for User", ErrTypeNotFound))
+				fmt.Errorf("%w due to missing Key Field \"userID\" for User", ErrTypeNotFound))
 			break
 		}
 		if allNull {

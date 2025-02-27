@@ -18,11 +18,3 @@ func NewResolver(pc productv1connect.ProductServiceClient, uc userv1connect.User
 		userClient:    uc,
 	}
 }
-
-// Query returns the root query resolver
-func (r *Resolver) Query() QueryResolver {
-	return &queryResolver{r}
-}
-
-// Centralized queryResolver to avoid redeclaration
-type queryResolver struct{ *Resolver }

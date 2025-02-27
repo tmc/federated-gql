@@ -8,15 +8,15 @@ extend type Query {
   """
   Fetch a user by its ID.
   """
-  user(userId: ID!): User
+  user(userID: ID!): User
 }
 
 """
-User is a federated entity, keyed by userId.
+User is a federated entity, keyed by userID.
 """
-type User @key(fields: "userId") {
+type User @key(fields: "userID") {
   # The ID of the user.
-  userId: ID!
+  userID: ID!
   # The name of the user.
   name: String
 }

@@ -4,7 +4,7 @@ package model
 
 // The ID of the product.
 type Product struct {
-	ProductID string   `json:"productId"`
+	ProductID string   `json:"productID"`
 	Name      *string  `json:"name,omitempty"`
 	Price     *float64 `json:"price,omitempty"`
 }
@@ -14,9 +14,9 @@ func (Product) IsEntity() {}
 type Query struct {
 }
 
-// User is a federated entity, keyed by userId.
+// User is a federated entity, keyed by userID.
 type User struct {
-	UserID string  `json:"userId"`
+	UserID string  `json:"userID"`
 	Name   *string `json:"name,omitempty"`
 }
 

@@ -8,15 +8,15 @@ extend type Query {
   """
   Retrieves a product by its ID.
   """
-  product(productId: ID!): Product
+  product(productID: ID!): Product
 }
 
 """
 The ID of the product.
 """
-type Product @key(fields: "productId") {
+type Product @key(fields: "productID") {
   # The ID of the product.
-  productId: ID!
+  productID: ID!
   # The name of the product.
   name: String
   # The price of the product.

@@ -19,7 +19,13 @@ type {{$schema.ServiceName}}Service {
   {{- end }}
   {{- $responseType := (index $schema.Types 0).Name -}}
   {{- $inputType := (index $schema.Inputs 0).Name -}}
-  {{ trimPrefix $field.Name "get" | lower }}(input: {{ $inputType }}!): {{ $responseType }}{{ if $field.IsRequired }}!{{ end }}
+  {{- $fieldName := trimPrefix $field.Name "get" | lower -}}
+  {{- $paramName := "input" -}}
+  {{- if hasSuffix $paramName "Id" -}}
+    {{- $paramName = (trimSuffix $paramName "Id") -}}
+    {{- $paramName = (printf "%sID" $paramName) -}}
+  {{- end -}}
+  {{ $fieldName }}({{ $paramName }}: {{ $inputType }}!): {{ $responseType }}{{ if $field.IsRequired }}!{{ end }}
 {{- end }}
 }
 {{ end -}}
@@ -37,6 +43,10 @@ type {{ $type.Name }} @key(fields: "id") {
   {{- $fieldName := $field.Name -}}
   {{- if eq $fieldName (printf "%sId" (lower $schema.ServiceName)) -}}
     {{- $fieldName = "id" -}}
+  {{- end -}}
+  {{- if hasSuffix $fieldName "Id" -}}
+    {{- $fieldName = (trimSuffix $fieldName "Id") -}}
+    {{- $fieldName = (printf "%sID" $fieldName) -}}
   {{- end -}}
   {{- $fieldType := $field.Type -}}
   {{- if isIDField $fieldName -}}
@@ -66,6 +76,10 @@ input {{ $input.Name }} {
   {{- $fieldName := $field.Name -}}
   {{- if eq $fieldName (printf "%sId" (lower $schema.ServiceName)) -}}
     {{- $fieldName = "id" -}}
+  {{- end -}}
+  {{- if hasSuffix $fieldName "Id" -}}
+    {{- $fieldName = (trimSuffix $fieldName "Id") -}}
+    {{- $fieldName = (printf "%sID" $fieldName) -}}
   {{- end }}
   {{ $fieldName }}: {{ $field.Type }}{{ if $field.IsRequired }}!{{ end }}
 {{- end }}

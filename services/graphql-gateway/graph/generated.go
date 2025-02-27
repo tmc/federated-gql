@@ -142,7 +142,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Product.Price(childComplexity), true
 
-	case "Product.productId":
+	case "Product.productID":
 		if e.complexity.Product.ProductID == nil {
 			break
 		}
@@ -159,7 +159,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Product(childComplexity, args["productId"].(string)), true
+		return e.complexity.Query.Product(childComplexity, args["productID"].(string)), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -171,7 +171,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.User(childComplexity, args["userId"].(string)), true
+		return e.complexity.Query.User(childComplexity, args["userID"].(string)), true
 
 	case "Query._service":
 		if e.complexity.Query.__resolve__service == nil {
@@ -199,7 +199,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Name(childComplexity), true
 
-	case "User.userId":
+	case "User.userID":
 		if e.complexity.User.UserID == nil {
 			break
 		}
@@ -492,15 +492,15 @@ func (ec *executionContext) field_Query_product_args(ctx context.Context, rawArg
 	if err != nil {
 		return nil, err
 	}
-	args["productId"] = arg0
+	args["productID"] = arg0
 	return args, nil
 }
 func (ec *executionContext) field_Query_product_argsProductID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (string, error) {
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("productId"))
-	if tmp, ok := rawArgs["productId"]; ok {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("productID"))
+	if tmp, ok := rawArgs["productID"]; ok {
 		return ec.unmarshalNID2string(ctx, tmp)
 	}
 
@@ -515,15 +515,15 @@ func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs m
 	if err != nil {
 		return nil, err
 	}
-	args["userId"] = arg0
+	args["userID"] = arg0
 	return args, nil
 }
 func (ec *executionContext) field_Query_user_argsUserID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (string, error) {
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
-	if tmp, ok := rawArgs["userId"]; ok {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
+	if tmp, ok := rawArgs["userID"]; ok {
 		return ec.unmarshalNID2string(ctx, tmp)
 	}
 
@@ -670,8 +670,8 @@ func (ec *executionContext) fieldContext_Entity_findProductByProductID(ctx conte
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "productId":
-				return ec.fieldContext_Product_productId(ctx, field)
+			case "productID":
+				return ec.fieldContext_Product_productID(ctx, field)
 			case "name":
 				return ec.fieldContext_Product_name(ctx, field)
 			case "price":
@@ -733,8 +733,8 @@ func (ec *executionContext) fieldContext_Entity_findUserByUserID(ctx context.Con
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "userId":
-				return ec.fieldContext_User_userId(ctx, field)
+			case "userID":
+				return ec.fieldContext_User_userID(ctx, field)
 			case "name":
 				return ec.fieldContext_User_name(ctx, field)
 			}
@@ -755,8 +755,8 @@ func (ec *executionContext) fieldContext_Entity_findUserByUserID(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _Product_productId(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Product_productId(ctx, field)
+func (ec *executionContext) _Product_productID(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Product_productID(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -786,7 +786,7 @@ func (ec *executionContext) _Product_productId(ctx context.Context, field graphq
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Product_productId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Product_productID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Product",
 		Field:      field,
@@ -895,7 +895,7 @@ func (ec *executionContext) _Query_product(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Product(rctx, fc.Args["productId"].(string))
+		return ec.resolvers.Query().Product(rctx, fc.Args["productID"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -917,8 +917,8 @@ func (ec *executionContext) fieldContext_Query_product(ctx context.Context, fiel
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "productId":
-				return ec.fieldContext_Product_productId(ctx, field)
+			case "productID":
+				return ec.fieldContext_Product_productID(ctx, field)
 			case "name":
 				return ec.fieldContext_Product_name(ctx, field)
 			case "price":
@@ -955,7 +955,7 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().User(rctx, fc.Args["userId"].(string))
+		return ec.resolvers.Query().User(rctx, fc.Args["userID"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -977,8 +977,8 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "userId":
-				return ec.fieldContext_User_userId(ctx, field)
+			case "userID":
+				return ec.fieldContext_User_userID(ctx, field)
 			case "name":
 				return ec.fieldContext_User_name(ctx, field)
 			}
@@ -1233,8 +1233,8 @@ func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _User_userId(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_userId(ctx, field)
+func (ec *executionContext) _User_userID(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_userID(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1264,7 +1264,7 @@ func (ec *executionContext) _User_userId(ctx context.Context, field graphql.Coll
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_userId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_userID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -3438,8 +3438,8 @@ func (ec *executionContext) _Product(ctx context.Context, sel ast.SelectionSet, 
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Product")
-		case "productId":
-			out.Values[i] = ec._Product_productId(ctx, field, obj)
+		case "productID":
+			out.Values[i] = ec._Product_productID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -3613,8 +3613,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("User")
-		case "userId":
-			out.Values[i] = ec._User_userId(ctx, field, obj)
+		case "userID":
+			out.Values[i] = ec._User_userID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
