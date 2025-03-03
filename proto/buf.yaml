@@ -1,5 +1,6 @@
 # proto/buf.yaml
 version: v2
+name: github.com/fraser-isbester/federated-gql
 breaking:
  use:
    - FILE

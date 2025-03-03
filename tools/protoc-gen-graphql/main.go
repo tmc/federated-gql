@@ -21,16 +21,16 @@ func main() {
 			log.Println("Error creating log file:", err)
 		}
 		log.Println("Plugin started")
-		
-		generator := newGenerator("templates/graphql-service-schema.tmpl")
+
+		generator := newGenerator("/Users/fraser/code/federated-gql/tools/protoc-gen-graphql/templates/graphql-service-schema.tmpl")
 		err := generator.Generate(gen)
-		
+
 		if err != nil {
 			log.Println("Error generating:", err)
 		} else {
 			log.Println("Generation completed successfully")
 		}
-		
+
 		return err
 	})
 }
