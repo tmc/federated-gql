@@ -33,3 +33,17 @@ message Product {
     // The price of the product.
     double price = 3;
 }
+
+// Order is a product order.
+message Order {
+    option (metadata.v1.entity) = true;
+
+    // The ID of the order.
+    string order_id = 1 [(metadata.v1.key) = true];
+    // The ID of the product.
+    string product_id = 2;
+    // The quantity of the product.
+    int32 quantity = 3;
+    // The total price of the order.
+    double total_price = 4;
+}
