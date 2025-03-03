@@ -25,7 +25,7 @@ message GetProductResponse {
 // Product is a product.
 message Product {
     option (metadata.v1.entity) = true;
-    
+
     // The ID of the product.
     string product_id = 1 [(metadata.v1.key) = true];
     // The name of the product.

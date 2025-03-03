@@ -6,15 +6,24 @@ import "google/protobuf/descriptor.proto";
 
 option go_package = "github.com/fraser-isbester/federated-gql/gen/go/metadata/v1;metadatav1";
 
-// Metadata options to enhance protocol buffer definitions
-// These are generic descriptors that can be used across different generation targets
-
 // Field options extend the standard protocol buffer field options
 extend google.protobuf.FieldOptions {
   // Identifies this field as a key field for the containing entity
   // For GraphQL federation, this marks a field as part of the entity's key
   // For databases, this could indicate a primary or unique key
   bool key = 50001;
+
+  // Marks a field as external, indicating it's defined in another service
+  // For GraphQL federation, this corresponds to the @external directive
+  bool external = 50002;
+
+  // Specifies that this field requires fields from another service
+  // For GraphQL federation, this corresponds to the @requires directive
+  string requires = 50003;
+
+  // Specifies that this field is computed from fields of other services
+  // For GraphQL federation, this corresponds to the @computed directive
+  string computed_from = 50004;
 }
 
 // Message options extend the standard protocol buffer message options
@@ -24,4 +33,18 @@ extend google.protobuf.MessageOptions {
   // For GraphQL, this indicates a type that participates in federation
   // For databases, this could represent a table or document type
   bool entity = 50001;
+
+  // Specifies the resolvers for this entity in other services
+  // For GraphQL federation, this helps with proper reference resolution
+  repeated string provides = 50002;
+}
+
+// Service options extend the standard protocol buffer service options
+extend google.protobuf.ServiceOptions {
+  // Indicates this service should be included in the federated graph
+  bool federated = 50001;
+
+  // Specifies the service name in the federation
+  // If not provided, the proto service name will be used
+  string service_name = 50002;
 }

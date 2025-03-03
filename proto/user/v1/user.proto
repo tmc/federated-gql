@@ -24,7 +24,7 @@ message GetUserResponse {
 // User is a user.
 message User {
   option (metadata.v1.entity) = true;
-  
+
   // The ID of the user.
   string user_id = 1 [(metadata.v1.key) = true];
   // The name of the user.
