@@ -8,28 +8,55 @@ schema {
 }
 
 extend type Query {
-  # // GetProduct returns a product by its ID.
+  """
+  // GetProduct returns a product by its ID.
+  """
   GetProduct(product_id: String!): GetProductResponse
 }
 
 
-# // Product is a product.
+"""
+Product is a product.
+"""
 type Product @key(fields: "product_id") {
-  # // The ID of the product.
+  """
+  The ID of the product.
+  """
   product_id: String!
-  # // The name of the product.
+    
+  """
+  The name of the product.
+  """
   name: String!
-  # // The price of the product.
+    
+  """
+  The price of the product.
+  """
   price: String!
+    
 }
-# // Order is a product order.
-type Order @key(fields: "order_id product_id") {
-  # // The ID of the order.
+"""
+Order is a product order.
+"""
+type Order @key(fields: "order_id") {
+  """
+  The ID of the order.
+  """
   order_id: String!
-  # // The ID of the product.
+    
+  """
+  The ID of the product.
+  """
   product_id: String!
-  # // The quantity of the product.
+    
+  """
+  The quantity of the product.
+  """
   quantity: String!
-  # // The total price of the order.
+    
+  """
+  The total price of the order.
+  """
   total_price: String!
+    
 }

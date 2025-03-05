@@ -125,22 +125,22 @@ func extractMethods(svc *protogen.Service) []*Method {
 	if svc == nil {
 		return nil
 	}
-	
+
 	var methods []*Method
 	for _, method := range svc.Methods {
 		if method == nil {
 			continue
 		}
-		
+
 		// Extract comments for the method
 		comment := ""
 		if method.Comments.Leading.String() != "" {
 			comment = method.Comments.Leading.String()
 		}
-		
+
 		// Extract proper input arguments
 		inputArgs := extractInputArgs(method.Input)
-		
+
 		// Decide method type (Query vs Mutation)
 		methodType := "Query"
 		if strings.HasPrefix(string(method.Desc.Name()), "Create") ||
@@ -150,7 +150,7 @@ func extractMethods(svc *protogen.Service) []*Method {
 			strings.HasPrefix(string(method.Desc.Name()), "Remove") {
 			methodType = "Mutation"
 		}
-		
+
 		methods = append(methods, &Method{
 			Name:       string(method.Desc.Name()),
 			Type:       methodType,
@@ -166,11 +166,11 @@ func extractInputArgs(input *protogen.Message) string {
 	if len(input.Fields) == 0 {
 		return ""
 	}
-	
+
 	var args []string
 	for _, f := range input.Fields {
 		gqlType := "String"
-		
+
 		// Basic type mapping
 		switch f.Desc.Kind().String() {
 		case "DOUBLE", "FLOAT":
@@ -180,19 +180,19 @@ func extractInputArgs(input *protogen.Message) string {
 		case "BOOL":
 			gqlType = "Boolean"
 		}
-		
+
 		// Add non-null marker if required
 		if !f.Desc.HasOptionalKeyword() {
 			gqlType += "!"
 		}
-		
+
 		args = append(args, fmt.Sprintf("%s: %s", f.Desc.Name(), gqlType))
 	}
-	
+
 	if len(args) == 0 {
 		return ""
 	}
-	
+
 	return "(" + strings.Join(args, ", ") + ")"
 }
 
@@ -201,16 +201,16 @@ func extractMessages(svc *protogen.Service) []*Message {
 	if svc == nil {
 		return nil
 	}
-	
+
 	// Track processed message names to avoid duplicates
 	processedMessages := make(map[string]bool)
-	
+
 	var messages []*Message
 	for _, m := range svc.Methods {
 		if m == nil || m.Output == nil {
 			continue
 		}
-		
+
 		// Add the output message itself
 		if !processedMessages[string(m.Output.Desc.Name())] {
 			messages = append(messages, &Message{
@@ -220,7 +220,7 @@ func extractMessages(svc *protogen.Service) []*Message {
 			})
 			processedMessages[string(m.Output.Desc.Name())] = true
 		}
-		
+
 		// Process fields that are messages
 		for _, f := range m.Output.Fields {
 			if f != nil && f.Message != nil {
@@ -232,7 +232,7 @@ func extractMessages(svc *protogen.Service) []*Message {
 						Fields: extractFields(f.Message),
 					})
 					processedMessages[msgName] = true
-					
+
 					// Recursively add nested message types
 					addNestedMessages(f.Message, &messages, processedMessages)
 				}
@@ -247,7 +247,7 @@ func addNestedMessages(msg *protogen.Message, messages *[]*Message, processed ma
 	if msg == nil {
 		return
 	}
-	
+
 	for _, f := range msg.Fields {
 		if f != nil && f.Message != nil {
 			msgName := string(f.Message.Desc.Name())
@@ -258,7 +258,7 @@ func addNestedMessages(msg *protogen.Message, messages *[]*Message, processed ma
 					Fields: extractFields(f.Message),
 				})
 				processed[msgName] = true
-				
+
 				// Recurse for this message's fields
 				addNestedMessages(f.Message, messages, processed)
 			}
@@ -271,19 +271,19 @@ func extractAllMessagesFromFile(file *protogen.File) []*Message {
 	if file == nil {
 		return nil
 	}
-	
+
 	var messages []*Message
 	for _, msg := range file.Messages {
 		if msg == nil {
 			continue
 		}
-		
+
 		// Extract comments for the message
 		comment := ""
 		if msg.Comments.Leading.String() != "" {
-			comment = msg.Comments.Leading.String()
+			comment = strings.ReplaceAll(msg.Comments.Leading.String(), "//", "")
 		}
-		
+
 		messages = append(messages, &Message{
 			Name:    string(msg.Desc.Name()),
 			Entity:  hasEntityOption(msg),
@@ -308,7 +308,7 @@ func hasEntityOption(msg *protogen.Message) bool {
 		fmt.Fprintf(os.Stderr, "Found entity by name: %s\n", name)
 		return true
 	}
-	
+
 	// Try to get via ProtoReflect with careful nil checks
 	if msg.Desc.Options() != nil {
 		const entityFieldNumber = 50001
@@ -329,7 +329,7 @@ func hasEntityOption(msg *protogen.Message) bool {
 			}
 		}
 	}
-	
+
 	return false
 }
 
@@ -338,12 +338,12 @@ func extractFields(msg *protogen.Message) []*Field {
 	if msg == nil {
 		return nil
 	}
-	
+
 	var fields []*Field
 	for _, f := range msg.Fields {
 		// Default to String for simplicity, should be improved to map types properly
 		gqlType := "String"
-		
+
 		// Basic type mapping
 		switch f.Desc.Kind().String() {
 		case "DOUBLE", "FLOAT":
@@ -353,18 +353,18 @@ func extractFields(msg *protogen.Message) []*Field {
 		case "BOOL":
 			gqlType = "Boolean"
 		}
-		
+
 		// If message type, use the message name as GraphQL type
 		if f.Desc.Kind().String() == "MESSAGE" && f.Message != nil {
 			gqlType = string(f.Message.Desc.Name())
 		}
-		
+
 		// Get field comment if available
 		comment := ""
 		if f.Comments.Leading.String() != "" {
-			comment = f.Comments.Leading.String()
+			comment = strings.ReplaceAll(f.Comments.Leading.String(), "//", "")
 		}
-		
+
 		// Check for key option using field name pattern matching as fallback
 		isKey := false
 		name := string(f.Desc.Name())
@@ -373,7 +373,7 @@ func extractFields(msg *protogen.Message) []*Field {
 			fmt.Fprintf(os.Stderr, "Found key field by name: %s\n", name)
 			isKey = true
 		}
-		
+
 		// Also try proto options if available
 		if f.Desc != nil && f.Desc.Options() != nil {
 			const keyFieldNumber = 50001
@@ -394,7 +394,7 @@ func extractFields(msg *protogen.Message) []*Field {
 				}
 			}
 		}
-		
+
 		fields = append(fields, &Field{
 			Name:        string(f.Desc.Name()),
 			GraphQLType: gqlType,
@@ -411,13 +411,13 @@ func hasMutationMethods(svc *protogen.Service) bool {
 	if svc == nil {
 		return false
 	}
-	
+
 	// Look for methods that start with Create, Update, Delete, etc.
 	for _, method := range svc.Methods {
 		if method == nil {
 			continue
 		}
-		
+
 		methodName := string(method.Desc.Name())
 		if strings.HasPrefix(methodName, "Create") ||
 			strings.HasPrefix(methodName, "Update") ||
@@ -427,6 +427,6 @@ func hasMutationMethods(svc *protogen.Service) bool {
 			return true
 		}
 	}
-	
+
 	return false
 }

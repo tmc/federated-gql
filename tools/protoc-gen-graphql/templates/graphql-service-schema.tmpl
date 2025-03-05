@@ -16,7 +16,9 @@ extend type Query {
       {{- range .Methods }}
         {{- if eq .Type "Query" }}
   {{- if .Comment }}
-  # {{ .Comment | trim }}
+  """
+  {{ .Comment | trim }}
+  """
   {{- end }}
   {{ .Name }}{{ .InputArgs }}: {{ .OutputType }}
         {{- end }}
@@ -32,7 +34,9 @@ extend type Mutation {
       {{- range .Methods }}
         {{- if eq .Type "Mutation" }}
   {{- if .Comment }}
-  # {{ .Comment | trim }}
+  """
+  {{ .Comment | trim }}
+  """
   {{- end }}
   {{ .Name }}{{ .InputArgs }}: {{ .OutputType }}
         {{- end }}
@@ -45,12 +49,16 @@ extend type Mutation {
 {{ range .Messages }}
   {{- if .Entity }}
 {{- if .Comment }}
-# {{ .Comment | trim }}
+"""
+{{ .Comment | trim }}
+"""
 {{- end }}
-type {{ .Name }} @key(fields: "{{ $keyFields := "" }}{{ range $i, $f := .Fields }}{{ if $f.Key }}{{ if ne $keyFields "" }} {{ end }}{{ $f.Name }}{{ $keyFields = (print $keyFields " " $f.Name) }}{{ end }}{{ end }}") {
+type {{ .Name }} @key(fields: "{{ $keyFields := "" }}{{ range $i, $f := .Fields }}{{ if and $f.Key (eq $i 0) }}{{ $f.Name }}{{ $keyFields = $f.Name }}{{ end }}{{ end }}") {
     {{- range .Fields }}
   {{- if .Comment }}
-  # {{ .Comment | trim }}
+  """
+  {{ .Comment | trim }}
+  """
   {{- end }}
   {{ .Name }}: {{ .GraphQLType }}{{ if .NonNull }}!{{ end }}{{ if .External }} @external{{ end }}
       {{- if .Requires }}
@@ -59,7 +67,7 @@ type {{ .Name }} @key(fields: "{{ $keyFields := "" }}{{ range $i, $f := .Fields 
       {{- if .ComputedFrom }}
  @computed(fields: "{{ .ComputedFrom }}")
       {{- end }}
-    {{- end }}
+    {{ end }}
 
     {{- range .ReferenceMethods }}
   {{ .Name }}{{ .InputArgs }}: {{ .OutputType }}
