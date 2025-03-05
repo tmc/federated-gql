@@ -1,4 +1,4 @@
-module github.com/fraser-isbester/federated-graphql/tools/protoc-gen-graphql
+module github.com/fraser-isbester/federated-gql/tools/protoc-gen-graphql
 
 go 1.24.0
 
