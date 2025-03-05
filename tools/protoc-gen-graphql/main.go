@@ -1,42 +1,31 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"os"
-	"path/filepath"
-	"runtime"
 
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
+// Options for the generator
+type Options struct {
+	TemplatePath string // Path to custom template file (falls back to embedded template if not provided)
+}
+
 func main() {
-	// Set log output to stderr for better debugging visibility
+	log.SetPrefix("protoc-gen-graphql: ")
+	log.SetFlags(0)
 	log.SetOutput(os.Stderr)
 	log.Println("Starting protoc-gen-graphql...")
+	var flags flag.FlagSet
 
-	protogen.Options{}.Run(func(gen *protogen.Plugin) error {
-		log.Println("Plugin started")
+	opts := Options{}
+	flags.StringVar(&opts.TemplatePath, "template_path", "", "Path to custom template file (falls back to embedded template if not provided)")
 
-		// Get the absolute path to the template
-		_, filename, _, ok := runtime.Caller(0)
-		if !ok {
-			log.Println("Failed to get current file path")
-			return nil
-		}
-
-		// Calculate the template path relative to the current file
-		templatePath := filepath.Join(filepath.Dir(filename), "templates/graphql-service-schema.tmpl")
-		log.Println("Using template path:", templatePath)
-
-		generator := newGenerator(templatePath)
-		err := generator.Generate(gen)
-
-		if err != nil {
-			log.Println("Error generating:", err)
-		} else {
-			log.Println("Generation completed successfully")
-		}
-
-		return err
+	protogen.Options{
+		ParamFunc: flags.Set,
+	}.Run(func(gen *protogen.Plugin) error {
+		return newGenerator(opts).Generate(gen)
 	})
 }

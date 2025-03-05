@@ -1,7 +1,9 @@
 package main
 
 import (
+	"embed"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,13 +13,18 @@ import (
 	"google.golang.org/protobuf/types/pluginpb"
 )
 
+//go:embed templates/graphql-service-schema.tmpl
+var templatesFS embed.FS
+
 // Generator handles the generation of GraphQL schema files from proto definitions
 type Generator struct {
 	TemplatePath string
 }
 
-func newGenerator(templatePath string) *Generator {
-	return &Generator{TemplatePath: templatePath}
+func newGenerator(opts Options) *Generator {
+	return &Generator{
+		TemplatePath: opts.TemplatePath,
+	}
 }
 
 // Generate processes protobuf files and generates the corresponding GraphQL schema
@@ -89,17 +96,38 @@ func (g *Generator) generateServiceSchema(svc *protogen.Service, gen *protogen.P
 }
 
 func (g *Generator) renderTemplate(service *protogen.Service, gf *protogen.GeneratedFile, file *protogen.File) error {
-	content, err := os.ReadFile(g.TemplatePath)
-	if err != nil {
-		return fmt.Errorf("failed to read template %s: %v", g.TemplatePath, err)
-	}
 	funcMap := template.FuncMap{
 		"trim": strings.TrimSpace,
 	}
-	t, err := template.New(filepath.Base(g.TemplatePath)).Funcs(funcMap).Parse(string(content))
-	if err != nil {
-		return fmt.Errorf("failed to parse template: %v", err)
+
+	var t *template.Template
+	var err error
+
+	// First try to load from file path if provided
+	content, err := os.ReadFile(g.TemplatePath)
+	if err == nil {
+		// Successfully read from file path
+		t, err = template.New(filepath.Base(g.TemplatePath)).Funcs(funcMap).Parse(string(content))
+		if err != nil {
+			return fmt.Errorf("failed to parse template from file %s: %v", g.TemplatePath, err)
+		}
+		log.Printf("Using custom template from path: %s", g.TemplatePath)
+	} else {
+		// Failed to read from file path, use embedded template as fallback
+		templateName := "templates/graphql-service-schema.tmpl"
+		content, err := templatesFS.ReadFile(templateName)
+		if err != nil {
+			return fmt.Errorf("failed to read embedded template: %v", err)
+		}
+
+		t, err = template.New(filepath.Base(templateName)).Funcs(funcMap).Parse(string(content))
+		if err != nil {
+			return fmt.Errorf("failed to parse embedded template: %v", err)
+		}
+
+		log.Println("Using embedded template as fallback")
 	}
+
 	templateData := prepareTemplateData(service, file)
 	return t.Execute(gf, templateData)
 }
@@ -305,7 +333,7 @@ func hasEntityOption(msg *protogen.Message) bool {
 	name := string(msg.Desc.Name())
 	if name == "Product" || name == "Order" || name == "User" {
 		// Output debug info to stderr (won't affect generated output)
-		fmt.Fprintf(os.Stderr, "Found entity by name: %s\n", name)
+		log.Printf("Found entity by name: %s", name)
 		return true
 	}
 
@@ -370,7 +398,7 @@ func extractFields(msg *protogen.Message) []*Field {
 		name := string(f.Desc.Name())
 		// Assume fields ending with "_id" are key fields for the entity
 		if strings.HasSuffix(name, "_id") {
-			fmt.Fprintf(os.Stderr, "Found key field by name: %s\n", name)
+			log.Printf("Found key field by name: %s", name)
 			isKey = true
 		}
 
