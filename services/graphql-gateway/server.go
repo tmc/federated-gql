@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
@@ -11,7 +12,8 @@ import (
 	productv1connect "github.com/fraser-isbester/federated-gql/gen/go/product/v1/productv1connect"
 	userv1connect "github.com/fraser-isbester/federated-gql/gen/go/user/v1/userv1connect"
 	"github.com/fraser-isbester/federated-gql/services/graphql-gateway/graph"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/gorilla/websocket"
 )
 
@@ -55,6 +57,24 @@ func main() {
 
 	// Setup routing with Chi
 	router := chi.NewRouter()
+
+	// Add middleware
+	router.Use(middleware.RequestID)
+	router.Use(middleware.RealIP)
+	router.Use(middleware.Logger)
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.Timeout(60 * time.Second))
+
+	// Custom middleware to log GraphQL operations
+	router.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path == "/query" && r.Method == "POST" {
+				log.Printf("GraphQL operation received from %s", r.RemoteAddr)
+			}
+			next.ServeHTTP(w, r)
+		})
+	})
+
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", srv)
 
