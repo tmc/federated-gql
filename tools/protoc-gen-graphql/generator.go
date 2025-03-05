@@ -13,19 +13,30 @@ import (
 	"google.golang.org/protobuf/types/pluginpb"
 )
 
-//go:embed templates/graphql-service-schema.tmpl
-var templatesFS embed.FS
-
 // Generator handles the generation of GraphQL schema files from proto definitions
 type Generator struct {
-	TemplatePath string
+	template *template.Template
 }
 
-func newGenerator(opts Options) *Generator {
-	return &Generator{
-		TemplatePath: opts.TemplatePath,
+// newGenerator creates a new Generator instance with the provided options
+func newGenerator(opts Options) (*Generator, error) {
+	g := &Generator{}
+	var err error
+	if g.template, err = loadTemplate(opts.TemplatePath); err != nil {
+		return nil, fmt.Errorf("failed to load template: %v", err)
 	}
+	return g, nil
 }
+
+var funcMap = template.FuncMap{
+	"trim": strings.TrimSpace,
+}
+
+var (
+	//go:embed templates/graphql-service-schema.tmpl
+	templatesFS         embed.FS
+	defaultTemplatePath = "templates/graphql-service-schema.tmpl"
+)
 
 // Generate processes protobuf files and generates the corresponding GraphQL schema
 func (g *Generator) Generate(gen *protogen.Plugin) error {
@@ -42,6 +53,39 @@ func (g *Generator) Generate(gen *protogen.Plugin) error {
 		}
 	}
 	return nil
+}
+
+// loadTemplate loads either the custom template specified in TemplatePath
+// or falls back to the embedded template if not found or specified
+func loadTemplate(templatePath string) (*template.Template, error) {
+	if templatePath != "" {
+		content, err := os.ReadFile(templatePath)
+		if err != nil {
+			log.Printf("Could not read template from %s: %v, falling back to embedded template", templatePath, err)
+		} else {
+			t, err := template.New(filepath.Base(templatePath)).Funcs(funcMap).Parse(string(content))
+			if err != nil {
+				log.Printf("Failed to parse template from file %s: %v, falling back to embedded template", templatePath, err)
+			} else {
+				log.Printf("Using custom template from path: %s", templatePath)
+				return t, nil
+			}
+		}
+	}
+
+	// Fallback to embedded template
+	content, err := templatesFS.ReadFile(defaultTemplatePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read embedded template: %v", err)
+	}
+
+	t, err := template.New(filepath.Base(defaultTemplatePath)).Funcs(funcMap).Parse(string(content))
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse embedded template: %v", err)
+	}
+
+	log.Println("Using embedded template")
+	return t, nil
 }
 
 // TemplateData contains all data needed to render the GraphQL schema template
@@ -96,40 +140,8 @@ func (g *Generator) generateServiceSchema(svc *protogen.Service, gen *protogen.P
 }
 
 func (g *Generator) renderTemplate(service *protogen.Service, gf *protogen.GeneratedFile, file *protogen.File) error {
-	funcMap := template.FuncMap{
-		"trim": strings.TrimSpace,
-	}
-
-	var t *template.Template
-	var err error
-
-	// First try to load from file path if provided
-	content, err := os.ReadFile(g.TemplatePath)
-	if err == nil {
-		// Successfully read from file path
-		t, err = template.New(filepath.Base(g.TemplatePath)).Funcs(funcMap).Parse(string(content))
-		if err != nil {
-			return fmt.Errorf("failed to parse template from file %s: %v", g.TemplatePath, err)
-		}
-		log.Printf("Using custom template from path: %s", g.TemplatePath)
-	} else {
-		// Failed to read from file path, use embedded template as fallback
-		templateName := "templates/graphql-service-schema.tmpl"
-		content, err := templatesFS.ReadFile(templateName)
-		if err != nil {
-			return fmt.Errorf("failed to read embedded template: %v", err)
-		}
-
-		t, err = template.New(filepath.Base(templateName)).Funcs(funcMap).Parse(string(content))
-		if err != nil {
-			return fmt.Errorf("failed to parse embedded template: %v", err)
-		}
-
-		log.Println("Using embedded template as fallback")
-	}
-
 	templateData := prepareTemplateData(service, file)
-	return t.Execute(gf, templateData)
+	return g.template.Execute(gf, templateData)
 }
 
 func prepareTemplateData(svc *protogen.Service, file *protogen.File) *TemplateData {

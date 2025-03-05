@@ -26,6 +26,11 @@ func main() {
 	protogen.Options{
 		ParamFunc: flags.Set,
 	}.Run(func(gen *protogen.Plugin) error {
-		return newGenerator(opts).Generate(gen)
+		g, err := newGenerator(opts)
+		if err != nil {
+			log.Fatalf("failed to create generator: %v", err)
+			return err
+		}
+		return g.Generate(gen)
 	})
 }
