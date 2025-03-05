@@ -1,0 +1,22 @@
+# Order represents a customer order
+type Order {
+  id: ID!
+  customerId: String!
+  totalAmount: Float!
+  status: OrderStatus!
+  createdAt: String!
+}
+
+# OrderStatus represents the current status of an order
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+extend type Query {
+  # Get an order by its ID
+  order(id: ID!): Order
+}

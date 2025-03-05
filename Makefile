@@ -56,6 +56,10 @@ run-users:
 run-products:
 	go run ./services/product
 
+.PHONY: run-order
+run-order:
+	go run ./services/order
+
 .PHONY: run-graphql-gateway
 run-graphql-gateway:
 	go run ./services/graphql-gateway
