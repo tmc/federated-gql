@@ -50,11 +50,11 @@ bin/graphql-gateway: $(shell find services/graphql-gateway -type f -name "*.go")
 
 .PHONY: run-users
 run-users:
-	go run ./services/users
+	cd ./services/users; go run .
 
 .PHONY: run-products
 run-products:
-	go run ./services/product
+	cd ./services/product; go run .
 
 .PHONY: run-graphql-gateway
 run-graphql-gateway:
