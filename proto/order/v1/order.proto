@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package order.v1;
+
+option go_package = "github.com/fraser-isbester/federated-gql/gen/go/order/v1;orderv1";
+
+// OrderService provides operations for working with orders
+service OrderService {
+  // GetOrder retrieves order details by order ID
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {}
+}
+
+// GetOrderRequest is the request message for the GetOrder method
+message GetOrderRequest {
+  // The ID of the order to retrieve
+  string order_id = 1;
+}
+
+// GetOrderResponse is the response message for the GetOrder method
+message GetOrderResponse {
+  // The ID of the order
+  string order_id = 1;
+  // The customer ID associated with this order
+  string customer_id = 2;
+  // The total amount of the order
+  double total_amount = 3;
+  // The status of the order
+  OrderStatus status = 4;
+  // The timestamp when the order was created
+  string created_at = 5;
+}
+
+// OrderStatus represents the current status of an order
+enum OrderStatus {
+  // Default value, should not be used
+  ORDER_STATUS_UNSPECIFIED = 0;
+  // Order has been placed but processing hasn't started
+  ORDER_STATUS_PENDING = 1;
+  // Order is currently being processed
+  ORDER_STATUS_PROCESSING = 2;
+  // Order has been shipped
+  ORDER_STATUS_SHIPPED = 3;
+  // Order has been delivered to the customer
+  ORDER_STATUS_DELIVERED = 4;
+  // Order has been cancelled
+  ORDER_STATUS_CANCELLED = 5;
+}
