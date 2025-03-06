@@ -6,6 +6,7 @@ Welcome to the documentation for the Federated GraphQL project. This directory c
 
 ### Getting Started
 - [Getting Started Guide](./getting-started.md) - Setup and run the project
+- [Development Guide](./development-guide.md) - Quick reference for commands and workflows
 
 ### System Architecture
 - [Architecture Overview](./architecture.md) - High-level system architecture
@@ -21,7 +22,3 @@ Welcome to the documentation for the Federated GraphQL project. This directory c
 
 ### Performance
 - [Performance Optimization](./performance.md) - Techniques for optimizing performance
-
-## Quick Reference
-
-For a quick reference of common commands and workflows, see [CLAUDE.md](../CLAUDE.md) in the project root.
