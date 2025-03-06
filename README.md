@@ -31,7 +31,7 @@ This project demonstrates how to build a federated GraphQL API that aggregates m
 
 ## Development Guide
 
-For detailed development instructions, see [CLAUDE.md](CLAUDE.md), which contains:
+For detailed development instructions, see the [Development Guide](./docs/development-guide.md) which contains:
 - Command reference
 - Development workflow
 - Adding new services
@@ -81,5 +81,6 @@ If the specified template file is not found, the generator will fall back to usi
 - `/gen`: Generated code
 - `/services`: Individual service implementations
 - `/tools`: Code generation tools
+- `/docs`: Comprehensive documentation
 
-For more details, see the [CLAUDE.md](CLAUDE.md) development guide.
+For more details, see the documentation in the `/docs` directory.
