@@ -1,6 +1,10 @@
 # CLAUDE.md - Development Guidelines
 
-## Commands
+This file serves as a quick reference guide. For comprehensive documentation, see the [docs](./docs) directory.
+
+## Quick Reference
+
+### Commands
 - Build/generate: `make generate` (runs both proto and GraphQL generation)
 - Generate specific parts:
   - Proto only: `make generate-proto` (runs `buf generate` in proto directory)
@@ -14,15 +18,28 @@
   - GraphQL gateway: `make test-graphql`
 - Test single package: `go test ./path/to/package`
 - Run services:
-  - Users service: `make run-users`
-  - Products service: `make run-products`
-  - GraphQL gateway: `make run-graphql-gateway`
+  - Users service: `make run-users` (uses gow for auto-reloading)
+  - Products service: `make run-products` (uses gow for auto-reloading)
+  - GraphQL gateway: `make run-graphql-gateway` (uses gow for auto-reloading)
 
-## Required Commands After Changes
+### Development Workflow
 **IMPORTANT**: After every change, run the following commands before committing:
 1. `make generate` - ensure all generated code is up to date
 2. `make build` - verify all services build successfully
 3. `make test` - ensure all tests pass
+
+## Detailed Documentation
+
+For detailed documentation, refer to these guides in the `docs` directory:
+
+- [Getting Started](./docs/getting-started.md): Setting up and running the project
+- [Architecture](./docs/architecture.md): Overview of system architecture
+- [Adding Services](./docs/adding-services.md): Step-by-step guide to adding new services
+- [Code Generation](./docs/code-generation.md): Details on the code generation lifecycle
+- [Federation](./docs/federation.md): Federation concepts and implementation
+- [Testing](./docs/testing.md): Best practices for testing
+- [Deployment](./docs/deployment.md): Deploying to production environments
+- [Performance](./docs/performance.md): Performance optimization techniques
 
 ## Code Style
 - **Error handling**: Check errors with `if err != nil`, no wrapping, use `connect.NewError` for Connect errors
@@ -33,7 +50,20 @@
 - **Documentation**: Comment all exported functions and types with meaningful descriptions
 
 ## Project Structure
-- `/proto`: Protocol buffer definitions
+- `/proto`: Protocol buffer definitions 
+  - `/metadata`: Federation metadata options
+  - `/user`, `/product`, etc.: Domain-specific service definitions
 - `/gen`: Generated code from protobuf
+  - `/go`: Generated Go code
+  - `/graphql`: Generated GraphQL schemas
 - `/services`: Individual service implementations
+  - `/graphql-gateway`: Federation gateway service
+  - `/users`, `/product`, etc.: Domain-specific services
 - `/tools`: Code generation tools
+  - `/protoc-gen-graphql`: Custom protoc plugin for GraphQL schema generation
+- `/docs`: Comprehensive documentation
+
+## Development Tips
+- **Use auto-reloading**: Services now use `gow` for hot-reloading during development
+- **Consistent federation metadata**: Use the metadata extensions consistently to ensure proper federation
+- **Test each layer**: Write tests for proto validation, service implementation, and GraphQL resolvers
