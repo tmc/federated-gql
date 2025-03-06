@@ -68,16 +68,38 @@ func main() {
 	// Custom middleware to log GraphQL operations
 	router.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if r.URL.Path == "/query" && r.Method == "POST" {
+			if r.URL.Path == "/graphql" && r.Method == "POST" {
 				log.Printf("GraphQL operation received from %s", r.RemoteAddr)
 			}
 			next.ServeHTTP(w, r)
 		})
 	})
 
-	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	router.Handle("/query", srv)
+	// Define the Apollo Sandbox handler
+	renderApolloSandbox := func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html")
+		w.Write([]byte(`<html><body><div style="width: 100%; height: 100vh;" id='embedded-sandbox'></div>
+<script src="https://embeddable-sandbox.cdn.apollographql.com/_latest/embeddable-sandbox.umd.production.min.js"></script>
+<script>
+  new window.EmbeddedSandbox({
+    target: '#embedded-sandbox',
+    initialEndpoint: 'http://localhost:8080/graphql',
+  });
+</script>
+</body></html>
+		`))
+	}
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
+	// Use Apollo Sandbox as the default interface
+	router.Get("/", http.HandlerFunc(renderApolloSandbox))
+	
+	// Keep the GraphQL playground as an alternative
+	router.Handle("/playground", playground.Handler("GraphQL playground", "/graphql"))
+	
+	// The GraphQL endpoint
+	router.Handle("/graphql", srv)
+
+	log.Printf("Connect to http://localhost:%s/ for Apollo Sandbox", port)
+	log.Printf("Connect to http://localhost:%s/playground for GraphQL Playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
