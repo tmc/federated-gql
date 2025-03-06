@@ -75,23 +75,8 @@ func main() {
 		})
 	})
 
-	// Define the Apollo Sandbox handler
-	renderApolloSandbox := func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/html")
-		w.Write([]byte(`<html><body><div style="width: 100%; height: 100vh;" id='embedded-sandbox'></div>
-<script src="https://embeddable-sandbox.cdn.apollographql.com/_latest/embeddable-sandbox.umd.production.min.js"></script>
-<script>
-  new window.EmbeddedSandbox({
-    target: '#embedded-sandbox',
-    initialEndpoint: 'http://localhost:8080/graphql',
-  });
-</script>
-</body></html>
-		`))
-	}
-
 	// Use Apollo Sandbox as the default interface
-	router.Get("/", http.HandlerFunc(renderApolloSandbox))
+	router.Get("/", http.HandlerFunc(RenderApolloSandbox))
 	
 	// Keep the GraphQL playground as an alternative
 	router.Handle("/playground", playground.Handler("GraphQL playground", "/graphql"))
