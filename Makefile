@@ -49,13 +49,18 @@ bin/graphql-gateway: $(shell find services/graphql-gateway -type f -name "*.go")
 	go build -o bin/graphql-gateway ./services/graphql-gateway
 
 .PHONY: run-users
-run-users:
-	go run ./services/users
+run-users: deps-gow
+	cd ./services/users; gow run .
 
 .PHONY: run-products
-run-products:
-	go run ./services/product
+run-products: deps-gow
+	cd ./services/product; gow run .
 
 .PHONY: run-graphql-gateway
-run-graphql-gateway:
-	go run ./services/graphql-gateway
+run-graphql-gateway: deps-gow
+	cd ./services/graphql-gateway; gow run .
+
+.PHONY: deps-gow
+deps-gow:
+	@command -v gow || go install github.com/mitranim/gow@latest
+	@command -v gow || (echo "gow not found in PATH. Please add $$HOME/go/bin to PATH" && exit 1)

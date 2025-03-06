@@ -2,6 +2,8 @@ module github.com/fraser-isbester/federated-gql/services/users
 
 go 1.24.0
 
+replace github.com/fraser-isbester/federated-gql/gen/go => ../../gen/go
+
 require (
 	connectrpc.com/connect v1.18.1
 	github.com/fraser-isbester/federated-gql/gen/go v0.0.0-20250224013956-e830e46f437a
