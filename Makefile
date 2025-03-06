@@ -3,7 +3,7 @@ generate: generate-proto generate-gql
 
 .PHONY: generate-proto
 generate-proto:
-	cd tools/protoc-gen-graphql && go install && cd -
+	cd tools/protoc-gen-graphql && go install
 	cd proto && buf generate
 
 .PHONY: clean-gql

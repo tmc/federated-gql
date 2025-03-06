@@ -1,36 +1,36 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"os"
 
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
+// Options for the generator
+type Options struct {
+	TemplatePath string // Path to custom template file (falls back to embedded template if not provided)
+}
+
 func main() {
-	// Create a log file for debugging
-	f, err := os.Create("/tmp/protoc-gen-graphql.log")
-	if err == nil {
-		defer f.Close()
-		log.SetOutput(f)
-		log.Println("Starting protoc-gen-graphql...")
-	}
+	log.SetPrefix("protoc-gen-graphql: ")
+	log.SetFlags(0)
+	log.SetOutput(os.Stderr)
+	log.Println("Starting protoc-gen-graphql...")
+	var flags flag.FlagSet
 
-	protogen.Options{}.Run(func(gen *protogen.Plugin) error {
+	opts := Options{}
+	flags.StringVar(&opts.TemplatePath, "template_path", "", "Path to custom template file (falls back to embedded template if not provided)")
+
+	protogen.Options{
+		ParamFunc: flags.Set,
+	}.Run(func(gen *protogen.Plugin) error {
+		g, err := newGenerator(opts)
 		if err != nil {
-			log.Println("Error creating log file:", err)
+			log.Fatalf("failed to create generator: %v", err)
+			return err
 		}
-		log.Println("Plugin started")
-
-		generator := newGenerator("/Users/fraser/code/federated-gql/tools/protoc-gen-graphql/templates/graphql-service-schema.tmpl")
-		err := generator.Generate(gen)
-
-		if err != nil {
-			log.Println("Error generating:", err)
-		} else {
-			log.Println("Generation completed successfully")
-		}
-
-		return err
+		return g.Generate(gen)
 	})
 }
